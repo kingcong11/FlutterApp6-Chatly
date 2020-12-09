@@ -1,7 +1,11 @@
-import 'package:chatly/screens/homepage_screen.dart';
-import 'package:chatly/screens/online_screen.dart';
+/* Packages */
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+/* Screens */
+import './homepage_screen.dart';
+import './online_screen.dart';
 
 class NavigationScreen extends StatefulWidget {
   @override
@@ -36,19 +40,16 @@ class _NavigationScreenState extends State<NavigationScreen> {
         ),
       ],
       bottom: TabBar(
-        labelStyle: TextStyle(
-          fontSize: 20.0,
-          fontWeight: FontWeight.bold
-        ),
-        unselectedLabelStyle: TextStyle(
-          fontSize: 16.0,
-        ),
+        labelStyle: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+        unselectedLabelStyle: TextStyle(fontSize: 16.0),
         indicatorColor: Color(0xFFe71d35),
-
         tabs: [
           Tab(text: 'Messages'),
           Tab(text: 'Online'),
         ],
+        onTap: (index) {
+          print(index);
+        },
       ),
       elevation: 0,
     );

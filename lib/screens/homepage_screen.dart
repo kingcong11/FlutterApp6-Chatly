@@ -1,6 +1,5 @@
 /* Packages */
 import 'package:flutter/material.dart';
-// import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 /* Widgets */
 import '../widgets/favorites_section.dart';
@@ -36,7 +35,6 @@ class HomePageScreen extends StatelessWidget {
           children: [
             Container(
               height: contentHeight * .23,
-              // color: Colors.lightBlue,
               padding: const EdgeInsets.only(
                 top: 14.0,
               ),
@@ -44,7 +42,6 @@ class HomePageScreen extends StatelessWidget {
             ),
             Expanded(
               child: Container(
-                // color: Colors.lightBlue,
               ),
             )
           ],

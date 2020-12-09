@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "545920999036",
+    "project_id": "chatly-1a36e",
+    "storage_bucket": "chatly-1a36e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:545920999036:android:7210d0701a260fc05f33f9",
+        "android_client_info": {
+          "package_name": "com.example.chatly"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "545920999036-mticc5oildfjbl2t0nv1ng831m7m595d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCaL6FhZp6Sc6Kf0Rulr380TJ7Qxx1Z72k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "545920999036-mticc5oildfjbl2t0nv1ng831m7m595d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
