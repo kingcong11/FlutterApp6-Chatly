@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 /* Screens */
 // import './screens/homepage_screen.dart';
 import './screens/navigation_screen.dart';
+import './screens/thread_screen.dart';
+import './screens/authentication_wrapper.dart';
+
 
 
 void main() {
@@ -36,14 +39,18 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Chatly',
       theme: ThemeData(
-        primaryColor: Color(0xFFe71d36),
-        accentColor: Color(0xFFFFFBFE), //snow
+        primaryColor: Color(0xFFf6aa48),
+        accentColor: Color(0xFF65c6ec), //snow
         scaffoldBackgroundColor: Color(0xFFF3F5F7),
         fontFamily: 'Nunito',
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      // home: HomePageScreen(),
-      home: NavigationScreen(),
+      // home: NavigationScreen(),
+      home: AuthenticationWrapper(),
+
+      routes: {
+        ThreadScreen.routeName: (ctx) => ThreadScreen(),
+      },
 
       debugShowCheckedModeBanner: false,
     );

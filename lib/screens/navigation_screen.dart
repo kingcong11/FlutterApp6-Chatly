@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 /* Screens */
 import './homepage_screen.dart';
 import './online_screen.dart';
+import './thread_screen.dart';
 
 class NavigationScreen extends StatefulWidget {
   @override
@@ -81,6 +82,18 @@ class _NavigationScreenState extends State<NavigationScreen> {
               OnlineScreen(),
             ],
           ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.message),
+          onPressed: () {
+
+
+            Firestore.instance.collection('chats/m9dxXbwyVQQKc8gi4cSW/messages').add({
+              'text': 'this was added by just clicking the fab',
+            });
+
+            Navigator.of(context).pushNamed(ThreadScreen.routeName);
+          },
         ),
       ),
     );
