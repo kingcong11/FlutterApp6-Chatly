@@ -39,7 +39,7 @@ class ThreadScreen extends StatelessWidget {
     return Scaffold(
       appBar: appbar,
       body: StreamBuilder(
-        stream: Firestore.instance.collection('chats/m9dxXbwyVQQKc8gi4cSW/messages').snapshots(),
+        stream: FirebaseFirestore.instance.collection('chats/m9dxXbwyVQQKc8gi4cSW/messages').snapshots(),
         builder: (ctx, streamSnapshot) {
           if (streamSnapshot.connectionState == ConnectionState.waiting) {
             return Center(

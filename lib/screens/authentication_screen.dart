@@ -1,6 +1,7 @@
 /* Packages */
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -340,29 +341,42 @@ class _AuthenticationScreenState extends State<AuthenticationScreen>
 
     try {
       if (request == AuthMode.Signin) {
-        _authResult =
-            await Provider.of<AuthenticationService>(context, listen: false)
-                .signIn(email, password);
+        _authResult = await Provider.of<AuthenticationService>(context, listen: false).signIn(email, password);
       } else if (request == AuthMode.Signup) {
-        _authResult =
-            await Provider.of<AuthenticationService>(context, listen: false)
-                .signUp(email, password);
+        _authResult = await Provider.of<AuthenticationService>(context, listen: false).signUp(email, password);
+
+        await FirebaseFirestore.instance.collection('users').doc(_authResult.user.uid).set({
+          'username': username,
+          'email': email,
+        });
+        
       }
     } on FirebaseAuthException catch (e) {
       print('Error Caught on FirebaseAuthException');
+      print(e.message);
       Scaffold.of(ctx).showSnackBar(SnackBar(
         content: Text(e.message),
         backgroundColor: Color(0xFFd74646),
       ));
+
+      setState(() {
+        _isLoading = false;
+      });
     } on PlatformException catch (e) {
       print('Error Caught on PlatformException');
       Scaffold.of(ctx).showSnackBar(SnackBar(
         content: Text(e.message),
         backgroundColor: Color(0xFFd74646),
       ));
+      setState(() {
+        _isLoading = false;
+      });
     } catch (e) {
       print('Error Caught on Generic Exception');
       print(e);
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 }
