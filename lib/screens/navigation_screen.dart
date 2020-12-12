@@ -1,7 +1,11 @@
 /* Packages */
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+
+/* Providers */
+import '../providers/authentication_service_provider.dart';
+
 
 /* Screens */
 import './homepage_screen.dart';
@@ -39,11 +43,18 @@ class _NavigationScreenState extends State<NavigationScreen> {
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
         ),
+        IconButton(
+          icon: Icon(Icons.exit_to_app_outlined),
+          onPressed: () {
+            Provider.of<AuthenticationService>(context, listen: false).signOut();
+            // context.read<AuthenticationService>().signOut();
+          },
+        ),
       ],
       bottom: TabBar(
         labelStyle: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
         unselectedLabelStyle: TextStyle(fontSize: 16.0),
-        indicatorColor: Color(0xFFe71d35),
+        indicatorColor: Color(0xFFf6aa48).withOpacity(.99),
         tabs: [
           Tab(text: 'Messages'),
           Tab(text: 'Online'),
@@ -74,6 +85,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
         appBar: appbar,
         body: SafeArea(
           child: TabBarView(
+            physics: NeverScrollableScrollPhysics(),
             children: [
               HomePageScreen(
                 contentHeight: mainContentHeigt,
@@ -86,11 +98,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.message),
           onPressed: () {
-
-
-            Firestore.instance.collection('chats/m9dxXbwyVQQKc8gi4cSW/messages').add({
-              'text': 'this was added by just clicking the fab',
-            });
+            // Firestore.instance.collection('chats/m9dxXbwyVQQKc8gi4cSW/messages').add({
+            //   'text': 'this was added by just clicking the fab',
+            // });
 
             Navigator.of(context).pushNamed(ThreadScreen.routeName);
           },
