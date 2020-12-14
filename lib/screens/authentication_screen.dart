@@ -1,12 +1,14 @@
 /* Packages */
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+
+/* Helpers */
+import '../helpers/database.dart';
 
 /* Providers */
 import 'package:chatly/providers/authentication_service_provider.dart';
@@ -29,6 +31,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen>
 
   final GlobalKey<FormState> _formKey = GlobalKey();
 
+  DatabaseHelper db = new DatabaseHelper();
   var _isLoading = false;
   var _authMode = AuthMode.Signin;
 
@@ -345,11 +348,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen>
       } else if (request == AuthMode.Signup) {
         _authResult = await Provider.of<AuthenticationService>(context, listen: false).signUp(email, password);
 
-        await FirebaseFirestore.instance.collection('users').doc(_authResult.user.uid).set({
+        await db.uploadUserInfo(_authResult.user.uid, {
           'username': username,
           'email': email,
         });
-        
       }
     } on FirebaseAuthException catch (e) {
       print('Error Caught on FirebaseAuthException');

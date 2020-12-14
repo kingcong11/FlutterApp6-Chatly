@@ -6,11 +6,10 @@ import 'package:provider/provider.dart';
 /* Providers */
 import '../providers/authentication_service_provider.dart';
 
-
 /* Screens */
 import './homepage_screen.dart';
 import './online_screen.dart';
-import './thread_screen.dart';
+import './search_screen.dart';
 
 class NavigationScreen extends StatefulWidget {
   @override
@@ -36,6 +35,19 @@ class _NavigationScreenState extends State<NavigationScreen> {
       actions: [
         IconButton(
           icon: Icon(
+            Icons.search,
+            size: 30,
+          ),
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) => SearchScreen(),
+            ));
+          },
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+        ),
+        IconButton(
+          icon: Icon(
             MdiIcons.feather,
             size: 30,
           ),
@@ -46,7 +58,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
         IconButton(
           icon: Icon(Icons.exit_to_app_outlined),
           onPressed: () {
-            Provider.of<AuthenticationService>(context, listen: false).signOut();
+            Provider.of<AuthenticationService>(context, listen: false)
+                .signOut();
             // context.read<AuthenticationService>().signOut();
           },
         ),
@@ -94,16 +107,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
               OnlineScreen(),
             ],
           ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.message),
-          onPressed: () {
-            // Firestore.instance.collection('chats/m9dxXbwyVQQKc8gi4cSW/messages').add({
-            //   'text': 'this was added by just clicking the fab',
-            // });
-
-            Navigator.of(context).pushNamed(ThreadScreen.routeName);
-          },
         ),
       ),
     );
