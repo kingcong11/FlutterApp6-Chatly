@@ -37,7 +37,7 @@ class Messages extends StatelessWidget {
           child: Text(
             message,
             style: TextStyle(
-              fontSize: 18.0,
+              fontSize: 16.0,
               fontWeight: FontWeight.w600,
               color: (isMe) ? Colors.white : Colors.black,
             ),

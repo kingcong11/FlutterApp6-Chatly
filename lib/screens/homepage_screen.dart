@@ -59,8 +59,7 @@ class HomePageScreen extends StatelessWidget {
                       )
                       .snapshots(),
                   builder: (_, chatsSnapshot) {
-                    if (chatsSnapshot.connectionState ==
-                        ConnectionState.waiting) {
+                    if (chatsSnapshot.connectionState == ConnectionState.waiting) {
                       return SingleChildScrollView(
                         child: ListStileSkeleton(),
                       );
@@ -72,16 +71,29 @@ class HomePageScreen extends StatelessWidget {
                       return ListView.builder(
                         itemCount: chatsDocs.length,
                         itemBuilder: (ctx, i) {
-                          // print('participants:');
-                          // print(chatsDocs[i]['participants']);
-                          return ListTile(
-                            key: ValueKey(chatsDocs[i].id),
-                            leading: Icon(Icons.verified_user),
-                            title: Text(chatsDocs[i].id),
-                            onTap: () => Navigator.of(context).pushNamed(
-                              ThreadScreen.routeName,
-                              arguments: chatsDocs[i].id,
-                            ),
+                          var participants = chatsDocs[i]['participants'] as List;
+                          var partnerIndex = participants.indexWhere((userId) => userId != FirebaseAuth.instance.currentUser.uid);
+
+                          return FutureBuilder(
+                            future: FirebaseFirestore.instance.collection('users').doc(participants[partnerIndex]).get(),
+                            builder: (ctx, futureSnapshot) {
+                              if (futureSnapshot.connectionState ==  ConnectionState.waiting) {
+                                return Container();
+                              } else {
+                                return ListTile(
+                                  key: ValueKey(chatsDocs[i].id),
+                                  leading: Icon(Icons.verified_user),
+                                  title: Text(futureSnapshot.data['username']),
+                                  onTap: () => Navigator.of(context).pushNamed(
+                                    ThreadScreen.routeName,
+                                    arguments: {
+                                      'chatId': chatsDocs[i].id,
+                                      'participantUsername': futureSnapshot.data['username'],
+                                    },
+                                  ),
+                                );
+                              }
+                            },
                           );
                         },
                       );

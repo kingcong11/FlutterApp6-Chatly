@@ -10,7 +10,7 @@ class ThreadScreen extends StatelessWidget {
   static const routeName = '/thread';
 
   /* Builders */
-  Widget _appbarBuilder(BuildContext context) {
+  Widget _appbarBuilder(BuildContext context, String username) {
     return AppBar(
       leading: IconButton(
         icon: Icon(Icons.arrow_back),
@@ -19,8 +19,8 @@ class ThreadScreen extends StatelessWidget {
         },
       ),
       title: Text(
-        'Sender name',
-        style: TextStyle(fontSize: 24),
+        username,
+        style: TextStyle(fontSize: 20),
       ),
       actions: [
         IconButton(
@@ -44,9 +44,11 @@ class ThreadScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chatId = ModalRoute.of(context).settings.arguments as String;
+    final arguments = ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+    final chatId = arguments['chatId'];
+    final partnerUsername = arguments['participantUsername'];
 
-    final appbar = _appbarBuilder(context);
+    final appbar = _appbarBuilder(context, partnerUsername);
     return Scaffold(
         appBar: appbar,
         body: SafeArea(
