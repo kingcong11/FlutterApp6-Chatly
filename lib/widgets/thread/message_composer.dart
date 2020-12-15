@@ -7,9 +7,13 @@ class MessageComposer extends StatefulWidget {
   const MessageComposer({
     Key key,
     @required this.chatId,
+    @required this.setChatIdHandler,
+    this.messageReceiverUid = '',
   }) : super(key: key);
 
   final String chatId;
+  final String messageReceiverUid;
+  final Function(String newChatId) setChatIdHandler;
 
   @override
   _MessageComposerState createState() => _MessageComposerState();
@@ -22,11 +26,39 @@ class _MessageComposerState extends State<MessageComposer> {
   /* Methods */
   void _sendMessage() async {
     FocusScope.of(context).unfocus();
-    FirebaseFirestore.instance.collection('chats/${widget.chatId}/messages').add({
-      'text': _enteredMessage,
-      'createdAt': DateTime.now(),
-      'userId': FirebaseAuth.instance.currentUser.uid,
-    });
+    try {
+      if (widget.chatId == null) {
+        /* New Chat */
+        // create chat with these participants first
+        final response =await FirebaseFirestore.instance.collection('chats').add({
+          'participants': [
+            FirebaseAuth.instance.currentUser.uid,
+            widget.messageReceiverUid,
+          ],
+        });
+        // notify the parent screen that we already created the chatroom with its participant and is ready for the stream builder set up
+        widget.setChatIdHandler(response.id);
+        await FirebaseFirestore.instance
+            .collection('chats/${response.id}/messages')
+            .add({
+          'text': _enteredMessage,
+          'createdAt': DateTime.now(),
+          'userId': FirebaseAuth.instance.currentUser.uid,
+        });
+      } else {
+        /* Existing Chat */
+        await FirebaseFirestore.instance
+            .collection('chats/${widget.chatId}/messages')
+            .add({
+          'text': _enteredMessage,
+          'createdAt': DateTime.now(),
+          'userId': FirebaseAuth.instance.currentUser.uid,
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
+
     _controller.clear();
   }
 

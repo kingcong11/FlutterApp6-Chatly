@@ -4,7 +4,15 @@ import 'package:flutter/services.dart';
 
 class DatabaseHelper {
 
-  Future<QuerySnapshot> searchUsername(String keyword) async {
+  // Future<QuerySnapshot> searchUsername(String keyword) async {
+  //   try {
+  //     return await FirebaseFirestore.instance.collection('users').where('username', isEqualTo: keyword).get();
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  // }
+
+  Future<void> searchUsername(String keyword) async {
     try {
       return await FirebaseFirestore.instance.collection('users').where('username', isEqualTo: keyword).get();
     } catch (e) {

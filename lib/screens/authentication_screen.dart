@@ -349,7 +349,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen>
         _authResult = await Provider.of<AuthenticationService>(context, listen: false).signUp(email, password);
 
         await db.uploadUserInfo(_authResult.user.uid, {
-          'username': username,
+          'username': username.trim().toLowerCase(),
           'email': email,
         });
       }

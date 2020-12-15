@@ -1,4 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:chatly/screens/thread_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../helpers/database.dart';
 
@@ -8,35 +9,50 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  var _searchQuery = '';
   final TextEditingController searchController = TextEditingController();
 
   final DatabaseHelper db = new DatabaseHelper();
 
-  QuerySnapshot searchSnapshot;
-
-  Widget searchResultBuilder() {
-    if (searchSnapshot == null) {
-      return Center(
-        child: Text('Search for someone'),
-      );
-    } else if (searchSnapshot != null &&
-        searchController.text.isNotEmpty &&
-        searchSnapshot.docs.length == 0) {
-      return Center(
-        child: Text('No result for "${searchController.text}"'),
-      );
-    } else {
-      return ListView.builder(
-        padding: const EdgeInsets.symmetric(vertical: 5),
-        itemCount: searchSnapshot.docs.length,
-        itemBuilder: (ctx, index) {
-          return SearchResultTile(
-            username: searchSnapshot.docs[index].data()['username'],
-            email: searchSnapshot.docs[index].data()['email'],
+  Widget searchResultBuilder(DatabaseHelper db) {
+    return FutureBuilder(
+      future: db.searchUsername(_searchQuery),
+      builder: (_, futureSnapshot) {
+        if (futureSnapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CircularProgressIndicator(),
           );
-        },
-      );
-    }
+        } else {
+          var list = futureSnapshot.data.documents as List;
+
+          if (list.isEmpty && _searchQuery.isNotEmpty) {
+            return Center(
+              child: Text('No result for "$_searchQuery"'),
+            );
+          } else if (list.isEmpty && _searchQuery.isEmpty) {
+            return Center(
+              child: Text('Search for someone.'),
+            );
+          } else {
+            return ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              itemCount: list.length,
+              itemBuilder: (ctx, index) {
+                if (!(list[index].id ==
+                    FirebaseAuth.instance.currentUser.uid)) {
+                  return SearchResultTile(
+                    userId: list[index].id,
+                    username: list[index]['username'],
+                    email: list[index]['email'],
+                  );
+                }
+                return Container();
+              },
+            );
+          }
+        }
+      },
+    );
   }
 
   @override
@@ -46,31 +62,37 @@ class _SearchScreenState extends State<SearchScreen> {
         backgroundColor: Colors.white,
         title: Container(
           color: Colors.white,
+          width: 280,
           child: TextField(
             controller: searchController,
             decoration: InputDecoration(
               hintText: 'Search user by username',
             ),
+            onChanged: (value) {
+              setState(() {
+                _searchQuery = value;
+              });
+            },
           ),
         ),
         actions: [
-          IconButton(
-            icon: Icon(
-              Icons.search,
-              size: 30,
-            ),
-            onPressed: () async {
-              if (searchController.text.isNotEmpty) {
-                final result = await db.searchUsername(searchController.text);
-                setState(() {
-                  searchSnapshot = result;
-                });
-                // print(result.docs.length);
-              }
-            },
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-          ),
+          // IconButton(
+          //   icon: Icon(
+          //     Icons.search,
+          //     size: 30,
+          //   ),
+          //   onPressed: () async {
+          //     if (searchController.text.isNotEmpty) {
+          //       final result = await db.searchUsername(searchController.text);
+          //       setState(() {
+          //         searchSnapshot = result;
+          //       });
+          //       // print(result.docs.length);
+          //     }
+          //   },
+          //   splashColor: Colors.transparent,
+          //   highlightColor: Colors.transparent,
+          // ),
         ],
       ),
       body: SafeArea(
@@ -79,8 +101,7 @@ class _SearchScreenState extends State<SearchScreen> {
           children: [
             Expanded(
               child: Container(
-                color: Colors.green,
-                child: searchResultBuilder(),
+                child: searchResultBuilder(db),
               ),
             ),
           ],
@@ -91,12 +112,14 @@ class _SearchScreenState extends State<SearchScreen> {
 }
 
 class SearchResultTile extends StatelessWidget {
+  final String userId;
   final String username;
   final String email;
 
   SearchResultTile({
     @required this.email,
     @required this.username,
+    @required this.userId,
   });
   @override
   Widget build(BuildContext context) {
@@ -113,8 +136,14 @@ class SearchResultTile extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(username),
-              Text(email),
+              Text(
+                username,
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 19),
+              ),
+              Text(
+                email,
+                style: TextStyle(fontSize: 16),
+              ),
             ],
           ),
           Container(
@@ -122,14 +151,28 @@ class SearchResultTile extends StatelessWidget {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: Colors.lightBlue,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(25),
             ),
-            child: Text(
-              'Message',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+            child: GestureDetector(
+              child: Text(
+                'Message',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.5,
+                ),
               ),
+              onTap: () {
+                Navigator.of(context).popAndPushNamed(
+                  ThreadScreen.routeName,
+                  arguments: {
+                    'chatId': null,
+                    'participantUid': userId,
+                    'participantUsername': username,
+                  },
+                );
+              },
             ),
           )
         ],

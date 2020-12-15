@@ -5,9 +5,67 @@ import 'package:flutter/material.dart';
 import '../widgets/thread/message_composer.dart';
 import '../widgets/thread/messages.dart';
 
-class ThreadScreen extends StatelessWidget {
+class ThreadScreen extends StatefulWidget {
   /* Properties */
   static const routeName = '/thread';
+
+  @override
+  _ThreadScreenState createState() => _ThreadScreenState();
+}
+
+class _ThreadScreenState extends State<ThreadScreen> {
+  /* Properties */
+  var _isInitialized = false;
+  String _chatId;
+  String _partnerUsername;
+  String _participantUid;
+
+  /* Methods */
+  void _setChatId(String newChatId) {
+    setState(() {
+      _chatId = newChatId;
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    /* I use to have this work around because I cant place the initialization of chatId in the build method (NewChat from search screen)
+    because  if I do so, by the time that chatId is reevaluated if it is null or not. chatId will be always null since I initialize it 
+    by getting data from the modal route so even if the screen rebuilds chatId will be reinitialized by modalroute so I make sure that
+    initialization from modal route only happens once */
+    if (!_isInitialized) {
+      final arguments = ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+      chatId = arguments['chatId'];
+      _participantUid = arguments['participantUid'];
+      _partnerUsername = arguments['participantUsername'];
+    }
+    _isInitialized = true;
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final appbar = _appbarBuilder(context, _partnerUsername);
+    return Scaffold(
+      appBar: appbar,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: (_chatId == null)
+                  ? Center(
+                      child: Text('Into message'),
+                    )
+                  : Messages(chatId: _chatId),
+            ),
+            MessageComposer(chatId: _chatId, setChatIdHandler: _setChatId, messageReceiverUid: _participantUid),
+          ],
+        ),
+      ),
+      backgroundColor: Theme.of(context).primaryColor,
+    );
+  }
 
   /* Builders */
   Widget _appbarBuilder(BuildContext context, String username) {
@@ -40,28 +98,5 @@ class ThreadScreen extends StatelessWidget {
   double _computeMainContentHeight(MediaQueryData mediaQueryData, AppBar appbar) {
     return mediaQueryData.size.height -
         (appbar.preferredSize.height + mediaQueryData.padding.top);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final arguments = ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
-    final chatId = arguments['chatId'];
-    final partnerUsername = arguments['participantUsername'];
-
-    final appbar = _appbarBuilder(context, partnerUsername);
-    return Scaffold(
-        appBar: appbar,
-        body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: Messages(chatId: chatId),
-              ),
-              MessageComposer(chatId: chatId),
-            ],
-          ),
-        ),
-        backgroundColor: Theme.of(context).primaryColor);
   }
 }
