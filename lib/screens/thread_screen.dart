@@ -1,4 +1,5 @@
 /* Packages */
+import 'package:chatly/helpers/database.dart';
 import 'package:flutter/material.dart';
 
 /* Widgets */
@@ -19,12 +20,21 @@ class _ThreadScreenState extends State<ThreadScreen> {
   String _chatId;
   String _partnerUsername;
   String _participantUid;
+  DatabaseHelper db = DatabaseHelper();
 
   /* Methods */
   void _setChatId(String newChatId) {
     setState(() {
       _chatId = newChatId;
     });
+  }
+
+  void _markMessagesAsRead(String chatId, String userUid) async {
+    try {
+      await db.markMessagesAsRead(chatId, userUid);
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -34,11 +44,16 @@ class _ThreadScreenState extends State<ThreadScreen> {
     by getting data from the modal route so even if the screen rebuilds chatId will be reinitialized by modalroute so I make sure that
     initialization from modal route only happens once */
     if (!_isInitialized) {
-      final arguments = ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
-      chatId = arguments['chatId'];
+      final arguments =
+          ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+      _chatId = arguments['chatId'];
       _participantUid = arguments['participantUid'];
       _partnerUsername = arguments['participantUsername'];
+      if (_chatId != null) {
+        _markMessagesAsRead(_chatId, _participantUid);
+      }
     }
+
     _isInitialized = true;
     super.didChangeDependencies();
   }
@@ -59,7 +74,10 @@ class _ThreadScreenState extends State<ThreadScreen> {
                     )
                   : Messages(chatId: _chatId),
             ),
-            MessageComposer(chatId: _chatId, setChatIdHandler: _setChatId, messageReceiverUid: _participantUid),
+            MessageComposer(
+                chatId: _chatId,
+                setChatIdHandler: _setChatId,
+                messageReceiverUid: _participantUid),
           ],
         ),
       ),
@@ -95,7 +113,8 @@ class _ThreadScreenState extends State<ThreadScreen> {
   }
 
   /* Getters */
-  double _computeMainContentHeight(MediaQueryData mediaQueryData, AppBar appbar) {
+  double _computeMainContentHeight(
+      MediaQueryData mediaQueryData, AppBar appbar) {
     return mediaQueryData.size.height -
         (appbar.preferredSize.height + mediaQueryData.padding.top);
   }

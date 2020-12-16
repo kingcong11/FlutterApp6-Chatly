@@ -89,6 +89,7 @@ class HomePageScreen extends StatelessWidget {
                                     arguments: {
                                       'chatId': chatsDocs[i].id,
                                       'participantUsername': futureSnapshot.data['username'],
+                                      'participantUid': futureSnapshot.data.id,
                                     },
                                   ),
                                 );

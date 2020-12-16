@@ -44,6 +44,7 @@ class _MessageComposerState extends State<MessageComposer> {
           'text': _enteredMessage,
           'createdAt': DateTime.now(),
           'userId': FirebaseAuth.instance.currentUser.uid,
+          'isRead': false,
         });
       } else {
         /* Existing Chat */
@@ -53,6 +54,7 @@ class _MessageComposerState extends State<MessageComposer> {
           'text': _enteredMessage,
           'createdAt': DateTime.now(),
           'userId': FirebaseAuth.instance.currentUser.uid,
+          'isRead': false,
         });
       }
     } catch (e) {
