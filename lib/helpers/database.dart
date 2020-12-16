@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart';
 
 class DatabaseHelper {
   // Future<QuerySnapshot> searchUsername(String keyword) async {
@@ -11,6 +10,22 @@ class DatabaseHelper {
   //     throw e;
   //   }
   // }
+  Future<Map<String, dynamic>> getCurrentUserInfo() async {
+    try {
+      final userInfo = await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser.uid).get();
+      return userInfo.data();
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> getUserInfo(String userUid) async {
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(userUid).get();
+    } catch (e) {
+      throw e;
+    }
+  }
 
   Future<void> searchUsername(String keyword) async {
     try {
@@ -23,7 +38,8 @@ class DatabaseHelper {
     }
   }
 
-  Future<void> markMessagesAsRead(String chatId, String participantUserUid) async {
+  Future<void> markMessagesAsRead(
+      String chatId, String participantUserUid) async {
     var batch = FirebaseFirestore.instance.batch();
     try {
       await FirebaseFirestore.instance
@@ -31,14 +47,14 @@ class DatabaseHelper {
           .where('userId', isEqualTo: participantUserUid)
           .get()
           .then((response) {
-              response.docs.forEach((message) {
-                batch.update(message.reference, {
-                  'isRead': true,
-                });
-              });
-
-              batch.commit();
+        response.docs.forEach((message) {
+          batch.update(message.reference, {
+            'isRead': true,
           });
+        });
+
+        batch.commit();
+      });
     } catch (e) {
       throw e;
     }

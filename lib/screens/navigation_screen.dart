@@ -11,20 +11,30 @@ import './homepage_screen.dart';
 import './online_screen.dart';
 import './search_screen.dart';
 
+/* Widgets */
+import '../widgets/shared/profile_modal_bottom_sheet.dart';
+
 class NavigationScreen extends StatefulWidget {
   @override
   _NavigationScreenState createState() => _NavigationScreenState();
 }
 
 class _NavigationScreenState extends State<NavigationScreen> {
+  /* Properties */
+  // var _isDrawerOpen = false;
+  // double _customDrawerYOffset;
+
   /* Builders */
-  Widget _appbarBuilder() {
+  Widget _appbarBuilder(Size deviceSize) {
     return AppBar(
       leading: Container(
         padding: const EdgeInsets.all(10),
-        child: CircleAvatar(
-          backgroundColor: Colors.blue,
-          backgroundImage: AssetImage('assets/images/user.jpg'),
+        child: GestureDetector(
+          child: CircleAvatar(
+            backgroundColor: Colors.blue,
+            backgroundImage: AssetImage('assets/images/user.jpg'),
+          ),
+          onTap: () => _showProfileActions(),
         ),
       ),
       title: Text(
@@ -80,6 +90,18 @@ class _NavigationScreenState extends State<NavigationScreen> {
     );
   }
 
+  /* Methods */
+  _showProfileActions() {
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      context: context,
+      isScrollControlled: true,
+      builder: (_) {
+        return ProfileBottomSheet();
+      },
+    );
+  }
+
   /* Getters */
   double _computeMainContentHeight(
       MediaQueryData mediaQueryData, AppBar appbar) {
@@ -90,8 +112,19 @@ class _NavigationScreenState extends State<NavigationScreen> {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    final appbar = _appbarBuilder();
+    final deviceSize = mediaQuery.size;
+    final appbar = _appbarBuilder(deviceSize);
     final mainContentHeigt = _computeMainContentHeight(mediaQuery, appbar);
+    // switch (_isDrawerOpen) {
+    //   case true:
+    //     _customDrawerYOffset = 150;
+
+    //     break;
+    //   case false:
+    //     _customDrawerYOffset = 500;
+
+    //     break;
+    // }
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -110,5 +143,36 @@ class _NavigationScreenState extends State<NavigationScreen> {
         ),
       ),
     );
+
+    // Stack(
+    //   children: [
+    //     AnimatedContainer(
+    //       // animate this with fadedTransition instead
+    //       duration: Duration(milliseconds: 300),
+    //       decoration: BoxDecoration(color: Colors.grey[900].withOpacity(0.7)),
+    //       child: Container(
+    //         width: deviceSize.width,
+    //         height: deviceSize.height,
+    //         transform: Matrix4.translationValues(0, _customDrawerYOffset, 1),
+    //         decoration: BoxDecoration(
+    //           color: Colors.white,
+    //           borderRadius: BorderRadius.only(
+    //             topLeft: Radius.circular(25),
+    //             topRight: Radius.circular(25),
+    //           ),
+    //         ),
+    //         child: ClipRRect(
+    //           borderRadius: BorderRadius.only(
+    //             topLeft: Radius.circular(25),
+    //             topRight: Radius.circular(25),
+    //           ),
+    //           child: Scaffold(
+    //             body: Text('something'),
+    //           ),
+    //         ),
+    //       ),
+    //     ),
+    //   ],
+    // );
   }
 }
