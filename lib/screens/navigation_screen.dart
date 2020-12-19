@@ -1,10 +1,11 @@
+import 'dart:io';
 /* Packages */
+import 'package:connectivity_widget/connectivity_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:provider/provider.dart';
 
-/* Providers */
-import '../providers/authentication_service_provider.dart';
+/* Helpers */
+import 'package:chatly/helpers/database.dart';
 
 /* Screens */
 import './homepage_screen.dart';
@@ -21,20 +22,33 @@ class NavigationScreen extends StatefulWidget {
 
 class _NavigationScreenState extends State<NavigationScreen> {
   /* Properties */
-  // var _isDrawerOpen = false;
-  // double _customDrawerYOffset;
+  var db = new DatabaseHelper();
 
   /* Builders */
   Widget _appbarBuilder(Size deviceSize) {
     return AppBar(
-      leading: Container(
-        padding: const EdgeInsets.all(10),
-        child: GestureDetector(
-          child: CircleAvatar(
-            backgroundColor: Colors.blue,
-            backgroundImage: AssetImage('assets/images/user.jpg'),
+      leading: Builder(
+        builder: (ctx) => Container(
+          padding: const EdgeInsets.all(10),
+          child: GestureDetector(
+            child: FutureBuilder(
+              future: db.getCurrentUserInfo(),
+              builder: (_, futureSnapshot) {
+                if (futureSnapshot.connectionState == ConnectionState.waiting) {
+                  return Container();
+                } else {
+                  var _userCredentials = futureSnapshot.data as Map<String, dynamic>;
+                  // print(_userCredentials);
+
+                  return CircleAvatar(
+                    backgroundColor: Colors.blue,
+                    backgroundImage: (_userCredentials.containsKey('profileImageUrl')) ? NetworkImage(_userCredentials['profileImageUrl']) : AssetImage('assets/images/no-user.png'),
+                  );
+                }
+              },
+            ),
+            onTap: () => _showProfileActions(ctx),
           ),
-          onTap: () => _showProfileActions(),
         ),
       ),
       title: Text(
@@ -56,22 +70,16 @@ class _NavigationScreenState extends State<NavigationScreen> {
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
         ),
-        IconButton(
-          icon: Icon(
-            MdiIcons.feather,
-            size: 30,
+        Builder(
+          builder: (ctx1) => IconButton(
+            icon: Icon(
+              MdiIcons.feather,
+              size: 30,
+            ),
+            onPressed: () {},
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
           ),
-          onPressed: () {},
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-        ),
-        IconButton(
-          icon: Icon(Icons.exit_to_app_outlined),
-          onPressed: () {
-            Provider.of<AuthenticationService>(context, listen: false)
-                .signOut();
-            // context.read<AuthenticationService>().signOut();
-          },
         ),
       ],
       bottom: TabBar(
@@ -91,13 +99,13 @@ class _NavigationScreenState extends State<NavigationScreen> {
   }
 
   /* Methods */
-  _showProfileActions() {
+  _showProfileActions(BuildContext ctx) {
     showModalBottomSheet(
       backgroundColor: Colors.transparent,
       context: context,
       isScrollControlled: true,
       builder: (_) {
-        return ProfileBottomSheet();
+        return ProfileBottomSheet(contextWithScaffold: ctx);
       },
     );
   }
@@ -115,64 +123,41 @@ class _NavigationScreenState extends State<NavigationScreen> {
     final deviceSize = mediaQuery.size;
     final appbar = _appbarBuilder(deviceSize);
     final mainContentHeigt = _computeMainContentHeight(mediaQuery, appbar);
-    // switch (_isDrawerOpen) {
-    //   case true:
-    //     _customDrawerYOffset = 150;
 
-    //     break;
-    //   case false:
-    //     _customDrawerYOffset = 500;
-
-    //     break;
-    // }
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: appbar,
-        body: SafeArea(
-          child: TabBarView(
-            physics: NeverScrollableScrollPhysics(),
-            children: [
-              HomePageScreen(
-                contentHeight: mainContentHeigt,
-                contentWidth: mediaQuery.size.width,
+        body: ConnectivityWidget(
+          builder: (_, isOnline) => SafeArea(
+            child: TabBarView(
+              physics: NeverScrollableScrollPhysics(),
+              children: [
+                HomePageScreen(
+                  contentHeight: mainContentHeigt,
+                  contentWidth: mediaQuery.size.width,
+                ),
+                OnlineScreen(),
+              ],
+            ),
+          ),
+          offlineBanner: Container(
+            alignment: Alignment.center,
+            width: double.infinity,
+            height: 38,
+            padding: const EdgeInsets.all(5),
+            color: Colors.red,
+            child: Text(
+              'Please check your internet connection',
+              style: TextStyle(
+                fontSize: 17,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
-              OnlineScreen(),
-            ],
+            ),
           ),
         ),
       ),
     );
-
-    // Stack(
-    //   children: [
-    //     AnimatedContainer(
-    //       // animate this with fadedTransition instead
-    //       duration: Duration(milliseconds: 300),
-    //       decoration: BoxDecoration(color: Colors.grey[900].withOpacity(0.7)),
-    //       child: Container(
-    //         width: deviceSize.width,
-    //         height: deviceSize.height,
-    //         transform: Matrix4.translationValues(0, _customDrawerYOffset, 1),
-    //         decoration: BoxDecoration(
-    //           color: Colors.white,
-    //           borderRadius: BorderRadius.only(
-    //             topLeft: Radius.circular(25),
-    //             topRight: Radius.circular(25),
-    //           ),
-    //         ),
-    //         child: ClipRRect(
-    //           borderRadius: BorderRadius.only(
-    //             topLeft: Radius.circular(25),
-    //             topRight: Radius.circular(25),
-    //           ),
-    //           child: Scaffold(
-    //             body: Text('something'),
-    //           ),
-    //         ),
-    //       ),
-    //     ),
-    //   ],
-    // );
   }
 }

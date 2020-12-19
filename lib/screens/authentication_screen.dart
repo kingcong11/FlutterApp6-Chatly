@@ -356,8 +356,15 @@ class _AuthenticationScreenState extends State<AuthenticationScreen>
     } on FirebaseAuthException catch (e) {
       print('Error Caught on FirebaseAuthException');
       print(e.message);
+      var message = '';
+      if (e.message.contains('unable to resolve host') || e.message.contains('No address associated with hostname')) {
+        message = 'Please check your internet connection.';
+      } else {
+        message = e.message;
+      }
+
       Scaffold.of(ctx).showSnackBar(SnackBar(
-        content: Text(e.message),
+        content: Text(message),
         backgroundColor: Color(0xFFd74646),
       ));
 

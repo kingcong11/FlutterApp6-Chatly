@@ -42,8 +42,8 @@ class _FavoritesSectionState extends State<FavoritesSection> {
                 return Column(
                   children: [
                     Container(
-                      width: 70,
-                      height: 70,
+                      width: 65,
+                      height: 65,
                       margin: const EdgeInsets.symmetric(horizontal: 8),
                       child: CircleAvatar(
                         backgroundImage: AssetImage('assets/images/user.jpg'),
@@ -51,14 +51,15 @@ class _FavoritesSectionState extends State<FavoritesSection> {
                     ),
                     Expanded(
                       child: Container(
-                        width: 70,
+                        width: 75,
                         alignment: Alignment.center,
                         child: Text(
-                          'Candice',
-                          maxLines: 2,
+                          'Niicsenvy11',
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
-                          style: TextStyle(height: 1.0, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              height: 1.0, fontWeight: FontWeight.bold),
                         ),
                       ),
                     )
