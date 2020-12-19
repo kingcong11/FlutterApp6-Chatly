@@ -1,6 +1,7 @@
 /* Packages */
 import 'package:chatly/helpers/database.dart';
 import 'package:flutter/material.dart';
+import 'package:pk_skeleton/pk_skeleton.dart';
 
 /* Widgets */
 import '../widgets/thread/message_composer.dart';
@@ -69,15 +70,80 @@ class _ThreadScreenState extends State<ThreadScreen> {
           children: [
             Expanded(
               child: (_chatId == null)
-                  ? Center(
-                      child: Text('Into message'),
+                  ? Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(35),
+                          topRight: Radius.circular(35),
+                        ),
+                      ),
+                      child: FutureBuilder(
+                        future: db.getUserInfo(_participantUid),
+                        builder: (_, futureSnapshot) {
+                          if (futureSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return PKCardProfileSkeleton(
+                              isCircularImage: true,
+                              isBottomLinesActive: true,
+                            );
+                          } else {
+                            final userInfo =
+                                futureSnapshot.data as Map<String, dynamic>;
+                            return Column(
+                              // mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(height: 120),
+                                Container(
+                                  height: 100,
+                                  width: 100,
+                                  decoration: BoxDecoration(
+                                    // color: Colors.red,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Theme.of(context).primaryColor,
+                                      width: 4,
+                                    ),
+                                  ),
+                                  child:
+                                      (userInfo.containsKey('profileImageUrl'))
+                                          ? Image.network(
+                                              userInfo['profileImageUrl'],
+                                              fit: BoxFit.cover,
+                                            )
+                                          : Image.asset(
+                                              'assets/images/no-user.png',
+                                              fit: BoxFit.cover,
+                                            ),
+                                ),
+                                Text(
+                                  userInfo['username'],
+                                  style: TextStyle(
+                                    fontSize: 24.0,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Text(
+                                  userInfo['email'],
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            );
+                          }
+                        },
+                      ),
                     )
                   : Messages(chatId: _chatId),
             ),
             MessageComposer(
-                chatId: _chatId,
-                setChatIdHandler: _setChatId,
-                messageReceiverUid: _participantUid),
+              chatId: _chatId,
+              setChatIdHandler: _setChatId,
+              messageReceiverUid: _participantUid,
+            ),
           ],
         ),
       ),

@@ -25,7 +25,6 @@ class _MessageComposerState extends State<MessageComposer> {
 
   /* Methods */
   void _sendMessage() async {
-    FocusScope.of(context).unfocus();
     try {
       if (widget.chatId == null) {
         /* New Chat */

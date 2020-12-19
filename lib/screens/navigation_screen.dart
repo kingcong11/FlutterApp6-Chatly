@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:connectivity_widget/connectivity_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 /* Helpers */
 import 'package:chatly/helpers/database.dart';
@@ -37,12 +38,16 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 if (futureSnapshot.connectionState == ConnectionState.waiting) {
                   return Container();
                 } else {
-                  var _userCredentials = futureSnapshot.data as Map<String, dynamic>;
+                  var _userCredentials =
+                      futureSnapshot.data as Map<String, dynamic>;
                   // print(_userCredentials);
 
                   return CircleAvatar(
                     backgroundColor: Colors.blue,
-                    backgroundImage: (_userCredentials.containsKey('profileImageUrl')) ? NetworkImage(_userCredentials['profileImageUrl']) : AssetImage('assets/images/no-user.png'),
+                    backgroundImage:
+                        (_userCredentials.containsKey('profileImageUrl'))
+                            ? NetworkImage(_userCredentials['profileImageUrl'])
+                            : AssetImage('assets/images/no-user.png'),
                   );
                 }
               },
@@ -59,7 +64,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
       actions: [
         IconButton(
           icon: Icon(
-            Icons.search,
+            MdiIcons.feather,
             size: 30,
           ),
           onPressed: () {
@@ -70,17 +75,17 @@ class _NavigationScreenState extends State<NavigationScreen> {
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
         ),
-        Builder(
-          builder: (ctx1) => IconButton(
-            icon: Icon(
-              MdiIcons.feather,
-              size: 30,
-            ),
-            onPressed: () {},
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-          ),
-        ),
+        // Builder(
+        //   builder: (ctx1) => IconButton(
+        //     icon: Icon(
+        //       MdiIcons.feather,
+        //       size: 30,
+        //     ),
+        //     onPressed: () {},
+        //     splashColor: Colors.transparent,
+        //     highlightColor: Colors.transparent,
+        //   ),
+        // ),
       ],
       bottom: TabBar(
         labelStyle: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
@@ -115,6 +120,30 @@ class _NavigationScreenState extends State<NavigationScreen> {
       MediaQueryData mediaQueryData, AppBar appbar) {
     return mediaQueryData.size.height -
         (appbar.preferredSize.height + mediaQueryData.padding.top);
+  }
+
+  @override
+  void initState() {
+    final fbm = FirebaseMessaging();
+    fbm.requestNotificationPermissions();
+    fbm.configure(
+      onMessage: (msg) {
+        print('onMessage');
+        print(msg);
+        return;
+      },
+      onLaunch: (msg) {
+        print('onLaunch');
+        print(msg);
+        return;
+      },
+      onResume: (msg) {
+        print('onResume');
+        print(msg);
+        return;
+      },
+    );
+    super.initState();
   }
 
   @override

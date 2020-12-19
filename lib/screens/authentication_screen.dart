@@ -151,6 +151,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen>
                           TextFormField(
                             key: ValueKey('email'),
                             keyboardType: TextInputType.emailAddress,
+                            autocorrect: false,
+                            textCapitalization: TextCapitalization.none,
+                            enableSuggestions: false,
                             textInputAction: TextInputAction.next,
                             decoration: InputDecoration(
                               labelText: 'Email',

@@ -38,12 +38,19 @@ class _SearchScreenState extends State<SearchScreen> {
               padding: const EdgeInsets.symmetric(vertical: 10),
               itemCount: list.length,
               itemBuilder: (ctx, index) {
-                if (!(list[index].id ==
-                    FirebaseAuth.instance.currentUser.uid)) {
+                if (!(list[index].id == FirebaseAuth.instance.currentUser.uid)) {
+
+                  // print
+
+                  // var asMapHolder = list[index] as Map<String, dynamic>;
+
                   return SearchResultTile(
                     userId: list[index].id,
                     username: list[index]['username'],
                     email: list[index]['email'],
+                    // hasProfileImage: asMapHolder.containsKey('profileImageUrl'),
+                    // imageUrl: asMapHolder.containsKey('profileImageUrl') ? list[index]['profileImageUrl'] : 'assets/images/no-user.png',
+
                   );
                 }
                 return Container();
@@ -65,6 +72,7 @@ class _SearchScreenState extends State<SearchScreen> {
           width: 280,
           child: TextField(
             controller: searchController,
+            autocorrect: false,
             decoration: InputDecoration(
               hintText: 'Search user by username',
             ),
@@ -75,25 +83,6 @@ class _SearchScreenState extends State<SearchScreen> {
             },
           ),
         ),
-        actions: [
-          // IconButton(
-          //   icon: Icon(
-          //     Icons.search,
-          //     size: 30,
-          //   ),
-          //   onPressed: () async {
-          //     if (searchController.text.isNotEmpty) {
-          //       final result = await db.searchUsername(searchController.text);
-          //       setState(() {
-          //         searchSnapshot = result;
-          //       });
-          //       // print(result.docs.length);
-          //     }
-          //   },
-          //   splashColor: Colors.transparent,
-          //   highlightColor: Colors.transparent,
-          // ),
-        ],
       ),
       body: SafeArea(
         child: Column(
@@ -115,11 +104,16 @@ class SearchResultTile extends StatelessWidget {
   final String userId;
   final String username;
   final String email;
+  // final bool hasProfileImage;
+  // final String imageUrl;
+
 
   SearchResultTile({
     @required this.email,
     @required this.username,
     @required this.userId,
+    // @required this.hasProfileImage,
+    // @required this.imageUrl
   });
   @override
   Widget build(BuildContext context) {
@@ -164,6 +158,7 @@ class SearchResultTile extends StatelessWidget {
                 ),
               ),
               onTap: () {
+                FocusScope.of(context).unfocus();
                 Navigator.of(context).popAndPushNamed(
                   ThreadScreen.routeName,
                   arguments: {

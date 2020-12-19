@@ -60,8 +60,7 @@ class HomePageScreen extends StatelessWidget {
                       .where(
                         'participants',
                         arrayContains: FirebaseAuth.instance.currentUser.uid,
-                      )
-                      .snapshots(),
+                      ).snapshots(),
                   builder: (_, chatsSnapshot) {
                     if (chatsSnapshot.connectionState == ConnectionState.waiting) {
                       return Container();
@@ -87,8 +86,7 @@ class HomePageScreen extends StatelessWidget {
                                   child: ListTile(
                                     key: ValueKey(chatsDocs[i].id),
                                     leading: CircleAvatar(
-                                      backgroundImage: (userInfo
-                                              .containsKey('profileImageUrl'))
+                                      backgroundImage: (userInfo.containsKey('profileImageUrl'))
                                           ? NetworkImage(
                                               futureSnapshot
                                                   .data['profileImageUrl'],

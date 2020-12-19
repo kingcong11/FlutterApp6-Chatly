@@ -46,7 +46,7 @@ class _FavoritesSectionState extends State<FavoritesSection> {
                       height: 65,
                       margin: const EdgeInsets.symmetric(horizontal: 8),
                       child: CircleAvatar(
-                        backgroundImage: AssetImage('assets/images/user.jpg'),
+                        backgroundImage: AssetImage('assets/images/no-user.png'),
                       ),
                     ),
                     Expanded(
@@ -54,7 +54,7 @@ class _FavoritesSectionState extends State<FavoritesSection> {
                         width: 75,
                         alignment: Alignment.center,
                         child: Text(
-                          'Niicsenvy11',
+                          'user.name',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
