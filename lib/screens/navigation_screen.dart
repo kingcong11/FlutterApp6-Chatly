@@ -40,7 +40,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 } else {
                   var _userCredentials =
                       futureSnapshot.data as Map<String, dynamic>;
-                  // print(_userCredentials);
 
                   return CircleAvatar(
                     backgroundColor: Colors.blue,

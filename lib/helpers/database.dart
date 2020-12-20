@@ -45,8 +45,7 @@ class DatabaseHelper {
     }
   }
 
-  Future<void> markMessagesAsRead(
-      String chatId, String participantUserUid) async {
+  Future<void> markMessagesAsRead(String chatId, String participantUserUid) async {
     var batch = FirebaseFirestore.instance.batch();
     try {
       await FirebaseFirestore.instance

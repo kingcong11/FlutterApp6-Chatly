@@ -25,16 +25,21 @@ class _MessageComposerState extends State<MessageComposer> {
 
   /* Methods */
   void _sendMessage() async {
+
+    var batch = FirebaseFirestore.instance.batch();
+
     try {
       if (widget.chatId == null) {
         /* New Chat */
         // create chat with these participants first
-        final response =await FirebaseFirestore.instance.collection('chats').add({
+        final response = await FirebaseFirestore.instance.collection('chats').add({
           'participants': [
             FirebaseAuth.instance.currentUser.uid,
             widget.messageReceiverUid,
           ],
+          'lastUpdate': Timestamp.now(),
         });
+
         // notify the parent screen that we already created the chatroom with its participant and is ready for the stream builder set up
         widget.setChatIdHandler(response.id);
         await FirebaseFirestore.instance
@@ -54,6 +59,9 @@ class _MessageComposerState extends State<MessageComposer> {
           'createdAt': DateTime.now(),
           'userId': FirebaseAuth.instance.currentUser.uid,
           'isRead': false,
+        });
+        await FirebaseFirestore.instance.collection('chats').doc(widget.chatId).update({
+          'lastUpdate' : Timestamp.now(),
         });
       }
     } catch (e) {

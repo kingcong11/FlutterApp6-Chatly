@@ -82,17 +82,14 @@ class _ThreadScreenState extends State<ThreadScreen> {
                       child: FutureBuilder(
                         future: db.getUserInfo(_participantUid),
                         builder: (_, futureSnapshot) {
-                          if (futureSnapshot.connectionState ==
-                              ConnectionState.waiting) {
+                          if (futureSnapshot.connectionState == ConnectionState.waiting) {
                             return PKCardProfileSkeleton(
                               isCircularImage: true,
                               isBottomLinesActive: true,
                             );
                           } else {
-                            final userInfo =
-                                futureSnapshot.data as Map<String, dynamic>;
+                            final userInfo = futureSnapshot.data as Map<String, dynamic>;
                             return Column(
-                              // mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 SizedBox(height: 120),
                                 Container(
@@ -106,16 +103,15 @@ class _ThreadScreenState extends State<ThreadScreen> {
                                       width: 4,
                                     ),
                                   ),
-                                  child:
-                                      (userInfo.containsKey('profileImageUrl'))
-                                          ? Image.network(
-                                              userInfo['profileImageUrl'],
-                                              fit: BoxFit.cover,
-                                            )
-                                          : Image.asset(
-                                              'assets/images/no-user.png',
-                                              fit: BoxFit.cover,
-                                            ),
+                                  child: CircleAvatar(
+                                    backgroundImage: (userInfo.containsKey('profileImageUrl'))
+                                        ? NetworkImage(
+                                            userInfo['profileImageUrl'],
+                                          )
+                                        : AssetImage(
+                                            'assets/images/no-user.png',
+                                          ),
+                                  ),
                                 ),
                                 Text(
                                   userInfo['username'],
