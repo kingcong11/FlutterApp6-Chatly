@@ -1,16 +1,18 @@
-# chatly
+# Chatly Messenger App
+A messaging application that features
 
-A new Flutter project.
+* Firebase Authentication
+* Firestore Database
+* Firebase Storage
+* Firebase Cloud Messaging
+* Stream Builders
+* Animations
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+## App UI Design Sample
 
-A few resources to get you started if this is your first Flutter project:
+![alt text](https://github.com/kingcong11/FlutterApp6-Chatly/blob/master/samples/1.png?raw=true)
+![alt text](https://github.com/kingcong11/FlutterApp6-Chatly/blob/master/samples/2.png?raw=true)
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![alt text](https://github.com/kingcong11/FlutterApp6-Chatly/blob/master/samples/3.png?raw=true)
+![alt text](https://github.com/kingcong11/FlutterApp6-Chatly/blob/master/samples/4.png?raw=true)
